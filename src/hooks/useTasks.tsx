@@ -6,7 +6,6 @@ const STORAGE_KEY = "taskboard-tasks";
 export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
-
   useEffect(() => {
     const savedTasks = localStorage.getItem(STORAGE_KEY);
     if (savedTasks) {
@@ -23,7 +22,7 @@ export function useTasks() {
     }
   }, []);
 
-  // Save tasks to localStorage whenever tasks change
+  // Save tasks to localStorage
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks]);

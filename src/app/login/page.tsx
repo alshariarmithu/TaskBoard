@@ -16,7 +16,7 @@ export default function LoginScreen() {
 
   const handleSubmit = () => {
     console.log("Login submitted:", formData);
-    alert("Welcome back to ProjectHub!");
+    alert("Welcome back to TaskBoard!");
   };
 
   const handleChange = (field: any, value: any) => {
