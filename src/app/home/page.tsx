@@ -5,6 +5,7 @@ import { TaskColumn } from "../../components/TaskColumn";
 import { AddTaskModal } from "../../components/AddTaskModal";
 import { useTasks } from "../../hooks/useTasks";
 import { TaskStage, TaskStageConfig } from "../../types/Task";
+import { Sidebar } from "../../components/Sidebar";
 
 const taskStages: TaskStageConfig[] = [
   {
@@ -38,6 +39,8 @@ const taskStages: TaskStageConfig[] = [
 ];
 
 function App() {
+  const [currentPage, setCurrentPage] = useState("projects");
+
   const { tasks, addTask, updateTask, deleteTask, moveTask, getTasksByStage } =
     useTasks();
   const [searchQuery, setSearchQuery] = useState("");
@@ -99,25 +102,28 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+      <Sidebar onNavigate={setCurrentPage} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {taskStages.map((stage) => (
-            <TaskColumn
-              key={stage.id}
-              stage={stage}
-              tasks={filteredTasks(stage.id)}
-              onUpdateTask={updateTask}
-              onDeleteTask={deleteTask}
-              onAddTask={handleAddTask}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              draggedTaskId={draggedTaskId}
-            />
-          ))}
-        </div>
-      </main>
+      <div className="flex-1 ml-20 transition-all duration-300">
+        <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {taskStages.map((stage) => (
+              <TaskColumn
+                key={stage.id}
+                stage={stage}
+                tasks={filteredTasks(stage.id)}
+                onUpdateTask={updateTask}
+                onDeleteTask={deleteTask}
+                onAddTask={handleAddTask}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                draggedTaskId={draggedTaskId}
+              />
+            ))}
+          </div>
+        </main>
+      </div>
 
       <AddTaskModal
         isOpen={showAddModal}

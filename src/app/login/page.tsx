@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuthState } from "../../hooks/useState";
 
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,7 +12,7 @@ export default function LoginScreen() {
   });
   const [focusedField, setFocusedField] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-
+  const { login } = useAuthState();
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -19,19 +20,13 @@ export default function LoginScreen() {
       const res = await fetch("http://localhost:5555/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formData }),
+        body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
+      const { token, user } = await res.json();
 
-      if (!res.ok) {
-        alert(data.message || "Login failed");
-        return;
-      }
-
-      alert("Login successful!");
-      localStorage.setItem("token", data.token);
-      router.push("/dashboard");
+      login(user, token, rememberMe);
+      router.push("/home");
     } catch (error) {
       console.error("Login error:", error);
       alert("Something went wrong. Please try again.");
