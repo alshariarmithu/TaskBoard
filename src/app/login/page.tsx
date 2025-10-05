@@ -14,10 +14,39 @@ export default function LoginScreen() {
 
   const router = useRouter();
 
-  const handleSubmit = () => {
-    console.log("Login submitted:", formData);
-    alert("Welcome back to ProjectHub!");
-  };
+const handleSubmit = async (e: any) => {
+  e.preventDefault();
+
+  if (!formData.email || !formData.password) {
+    alert("Please fill in both fields");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Login failed");
+      return;
+    }
+
+    //Login success
+    alert("Login successful!");
+    router.push("/dashboard"); 
+  } catch (err) {
+    console.error("Error during login:", err);
+    alert("Something went wrong. Please try again.");
+  }
+};
+
 
   const handleChange = (field: any, value: any) => {
     setFormData({
