@@ -13,9 +13,26 @@ export default function SignupScreen() {
   const [focusedField, setFocusedField] = useState("");
   const router = useRouter();
 
-  const handleSubmit = () => {
-    console.log("Form submitted:", formData);
-    alert("Welcome to your project management workspace!");
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch("http://localhost:5555/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Signup failed");
+        return;
+      }
+      localStorage.setItem("token", data.token);
+      router.push("/home");
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   const handleChange = (field: any, value: any) => {

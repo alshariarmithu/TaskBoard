@@ -14,9 +14,28 @@ export default function LoginScreen() {
 
   const router = useRouter();
 
-  const handleSubmit = () => {
-    console.log("Login submitted:", formData);
-    alert("Welcome back to TaskBoard!");
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch("http://localhost:5555/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formData }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Login failed");
+        return;
+      }
+
+      alert("Login successful!");
+      localStorage.setItem("token", data.token);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   const handleChange = (field: any, value: any) => {
