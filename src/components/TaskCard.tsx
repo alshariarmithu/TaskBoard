@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CreditCard as Edit2, Trash2, GripVertical } from "lucide-react";
+import { Pencil, Trash2, GripVertical } from "lucide-react";
 import { Task } from "../types/Task";
 
 interface TaskCardProps {
@@ -38,42 +38,40 @@ export function TaskCard({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && e.ctrlKey) {
-      handleSave();
-    } else if (e.key === "Escape") {
-      handleCancel();
-    }
+    if (e.key === "Enter" && e.ctrlKey) handleSave();
+    if (e.key === "Escape") handleCancel();
   };
 
   if (isEditing) {
     return (
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
+      <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm space-y-4 transition-all duration-200">
         <input
           type="text"
           value={editTitle}
           onChange={(e) => setEditTitle(e.target.value)}
-          className="w-full text-sm font-medium border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full text-sm font-medium text-gray-900 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          placeholder="Task title"
           onKeyDown={handleKeyPress}
           autoFocus
         />
         <textarea
           value={editDescription}
           onChange={(e) => setEditDescription(e.target.value)}
-          className="w-full text-sm text-gray-600 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className="w-full text-sm text-gray-700 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all"
           rows={3}
           onKeyDown={handleKeyPress}
-          placeholder="Task description..."
+          placeholder="Add description (optional)"
         />
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end gap-2 pt-1">
           <button
             onClick={handleCancel}
-            className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
             Save
           </button>
@@ -84,41 +82,57 @@ export function TaskCard({
 
   return (
     <div
-      className={`bg-white p-4 rounded-lg shadow-sm border border-gray-200 group hover:shadow-md transition-all duration-200 cursor-grab active:cursor-grabbing ${
-        isDragging ? "opacity-50 rotate-2" : ""
+      className={`relative bg-white p-4 rounded-lg border border-gray-200 group hover:border-gray-300 hover:shadow-sm transition-all duration-150 cursor-grab active:cursor-grabbing ${
+        isDragging ? "opacity-50 shadow-lg" : ""
       }`}
       draggable
       onDragStart={(e) => onDragStart?.(e, task.id)}
     >
-      <div className="flex items-start justify-between mb-2">
-        <h3 className="text-sm font-medium text-gray-900 flex-1 pr-2 line-clamp-2">
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <h3 className="text-sm font-semibold text-gray-900 flex-1 leading-tight line-clamp-2">
           {task.title}
         </h3>
-        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <GripVertical className="w-4 h-4 text-gray-400" />
+        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+            title="Drag to reorder"
+          >
+            <GripVertical className="w-4 h-4" />
+          </button>
           <button
             onClick={() => setIsEditing(true)}
-            className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+            className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
             title="Edit task"
           >
-            <Edit2 className="w-3 h-3" />
+            <Pencil className="w-4 h-4" />
           </button>
           <button
             onClick={() => onDelete(task.id)}
-            className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
             title="Delete task"
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       </div>
+
       {task.description && (
-        <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+        <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
           {task.description}
         </p>
       )}
-      <div className="text-xs text-gray-400">
-        Created {task.createdAt.toLocaleDateString()}
+
+      <div className="flex items-center text-xs text-gray-500">
+        <time dateTime={task.createdAt.toISOString()}>
+          {task.createdAt.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year:
+              task.createdAt.getFullYear() !== new Date().getFullYear()
+                ? "numeric"
+                : undefined,
+          })}
+        </time>
       </div>
     </div>
   );

@@ -18,11 +18,16 @@ import { useAuthState } from "../hooks/useState";
 
 interface SidebarProps {
   onNavigate?: (page: string) => void;
+  isCollapsed: boolean;
+  setIsCollapsed: (value: boolean) => void;
 }
 
-export function Sidebar({ onNavigate }: SidebarProps) {
-  const {  logout } = useAuthState();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export function Sidebar({
+  onNavigate,
+  isCollapsed,
+  setIsCollapsed,
+}: SidebarProps) {
+  const { logout } = useAuthState();
   const [activeItem, setActiveItem] = useState("dashboard");
 
   const menuItems = [
@@ -169,36 +174,5 @@ export function Sidebar({ onNavigate }: SidebarProps) {
         <Menu className="w-6 h-6" />
       </button>
     </>
-  );
-}
-
-export default function AppWithSidebar() {
-  const [currentPage, setCurrentPage] = useState("dashboard");
-
-  return (
-    <div className="flex min-h-screen bg-gray-100">
-      <Sidebar onNavigate={setCurrentPage} />
-
-      <main className="flex-1 ml-64 transition-all duration-300">
-        <div className="p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Welcome to{" "}
-            {currentPage.charAt(0).toUpperCase() + currentPage.slice(1)}
-          </h1>
-          <p className="text-gray-600">
-            This is where your {currentPage} content would appear.
-          </p>
-
-          {/* Your existing TaskBoard components would go here */}
-          <div className="mt-8 p-6 bg-white rounded-lg shadow">
-            <p className="text-gray-700">
-              Integrate your TaskBoard components in this area. The sidebar will
-              remain fixed on the left while your task management interface
-              appears here.
-            </p>
-          </div>
-        </div>
-      </main>
-    </div>
   );
 }

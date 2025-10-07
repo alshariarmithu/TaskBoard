@@ -102,10 +102,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Sidebar onNavigate={setCurrentPage} />
-
       <div className="flex-1 ml-20 transition-all duration-300">
-        <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {taskStages.map((stage) => (
