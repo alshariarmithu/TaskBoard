@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Menu,
 } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuthState } from "../hooks/useState";
 
 interface SidebarProps {
@@ -27,22 +28,35 @@ export function Sidebar({
   isCollapsed,
   setIsCollapsed,
 }: SidebarProps) {
+  const router = useRouter();
   const { logout } = useAuthState();
-  const [activeItem, setActiveItem] = useState("dashboard");
+  const pathname = usePathname();
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "projects", label: "Projects", icon: FolderKanban },
-    { id: "team", label: "Team Members", icon: Users },
-    { id: "calendar", label: "Calendar", icon: Calendar },
-    { id: "reports", label: "Reports", icon: BarChart3 },
-    { id: "documents", label: "Documents", icon: FileText },
-    { id: "notifications", label: "Notifications", icon: Bell, badge: 3 },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: "board", label: "Board", icon: LayoutDashboard, path: "/home" },
+    {
+      id: "projects",
+      label: "Projects",
+      icon: FolderKanban,
+      path: "/projects",
+    },
+    { id: "team", label: "Team Members", icon: Users, path: "/team" },
+    { id: "calendar", label: "Calendar", icon: Calendar, path: "/calendar" },
+    { id: "reports", label: "Reports", icon: BarChart3, path: "/reports" },
+    { id: "documents", label: "Documents", icon: FileText, path: "/documents" },
+    {
+      id: "notifications",
+      label: "Notifications",
+      icon: Bell,
+      badge: 3,
+      path: "/notifications",
+    },
+    { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
   ];
 
-  const handleItemClick = (id: string) => {
-    setActiveItem(id);
+  const handleItemClick = (id: string, path: string) => {
+    //setActiveItem(id);
+    router.push(path);
     onNavigate?.(id);
   };
 
@@ -84,12 +98,13 @@ export function Sidebar({
           <div className="space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
-              const isActive = activeItem === item.id;
+              const isActive = pathname === item.path;
+
 
               return (
                 <button
                   key={item.id}
-                  onClick={() => handleItemClick(item.id)}
+                  onClick={() => handleItemClick(item.id, item.path)}
                   className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 group relative ${
                     isActive
                       ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
