@@ -27,7 +27,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const userEmail = "user@example.com";
   const userName = "John Doe";
-  const userAvatar = "";
+  const userAvatar = "https://i.postimg.cc/s2nX02qq/unkownuser.jpg";
 
   // Sidebar width constants
   const sidebarWidth = isCollapsed ? 80 : 256; // px (w-20, w-64)
@@ -76,12 +76,12 @@ export default function Layout({ children }: LayoutProps) {
           <header className="bg-white border-b border-gray-200 sticky top-0 z-50 transition-all duration-300">
             <div className="flex items-center justify-between h-16 px-6">
               <div className="flex items-center gap-3">
-                <button
+                {/* <button
                   onClick={() => setIsCollapsed(!isCollapsed)}
                   className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <Menu className="w-5 h-5 text-gray-600" />
-                </button>
+                </button> */}
 
                 <KanbanSquare className="w-8 h-8 text-blue-600" />
                 <div>

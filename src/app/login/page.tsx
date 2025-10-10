@@ -25,7 +25,7 @@ export default function LoginScreen() {
       });
 
       const { token } = await res.json();
-      console.log(token);
+      //console.log(token);
       localStorage.setItem("token", token);
       //login(user, token, rememberMe);
       router.push("/home");
