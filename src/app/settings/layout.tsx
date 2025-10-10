@@ -24,8 +24,15 @@ export default function Layout({ children }: LayoutProps) {
 
   const [currentPage, setCurrentPage] = useState("projects");
 
-  const uEmail = localStorage.getItem("email");
-  const uName = localStorage.getItem("userName");
+  const [uName, setName] = useState<string | null>("");
+  const [uEmail, setEmail] = useState<string | null>("");
+
+  useEffect(() => {
+    const uEmail = localStorage.getItem("email");
+    const uName = localStorage.getItem("userName");
+    setName(uName);
+    setEmail(uEmail);
+  }, []);
   const userEmail = uEmail ? uEmail : "Guest User";
   const userName = uName ? uName : "Guest User";
   const userAvatar = "https://i.postimg.cc/s2nX02qq/unkownuser.jpg";
