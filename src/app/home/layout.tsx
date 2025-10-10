@@ -24,8 +24,10 @@ export default function Layout({ children }: LayoutProps) {
 
   const [currentPage, setCurrentPage] = useState("projects");
 
-  const userEmail = "user@example.com";
-  const userName = "John Doe";
+  const uEmail = localStorage.getItem("email");
+  const uName = localStorage.getItem("userName");
+  const userEmail = uEmail ? uEmail : "Guest User";
+  const userName = uName ? uName : "Guest User";
   const userAvatar = "https://i.postimg.cc/s2nX02qq/unkownuser.jpg";
 
   // Sidebar width constants

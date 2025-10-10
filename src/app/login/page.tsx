@@ -24,9 +24,11 @@ export default function LoginScreen() {
         body: JSON.stringify(formData),
       });
 
-      const { token } = await res.json();
+      const { token, user } = await res.json();
       //console.log(token);
       localStorage.setItem("token", token);
+      localStorage.setItem("userName", user.name);
+      localStorage.setItem("email", user.email);
       //login(user, token, rememberMe);
       router.push("/home");
     } catch (error) {
