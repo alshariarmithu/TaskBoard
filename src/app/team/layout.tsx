@@ -143,13 +143,13 @@ export default function Layout({ children }: LayoutProps) {
 
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
-                    <button
+                    {/* <button
                       onClick={() => setIsDropdownOpen(false)}
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                     >
                       <User className="w-4 h-4 text-gray-500" />
                       Profile
-                    </button>
+                    </button> */}
                     <button
                       onClick={() => setIsDropdownOpen(false)}
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
