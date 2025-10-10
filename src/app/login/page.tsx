@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthState } from "../../hooks/useState";
 
 export default function LoginScreen() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -17,7 +18,7 @@ export default function LoginScreen() {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch("http://localhost:5555/api/auth/login", {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

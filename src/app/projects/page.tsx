@@ -24,8 +24,7 @@ import {
   X,
 } from "lucide-react";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5555/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface TeamMember {
   id: string;
@@ -117,7 +116,7 @@ export default function ProjectsPage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${API_BASE_URL}/projects`);
+      const response = await fetch(`${API_URL}/projects`);
       if (!response.ok) throw new Error("Failed to fetch projects");
       const data = await response.json();
       setProjects(data);
@@ -132,7 +131,7 @@ export default function ProjectsPage() {
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_BASE_URL}/projects`, {
+      const response = await fetch(`${API_URL}/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -160,7 +159,7 @@ export default function ProjectsPage() {
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/projects/${editingProject._id}`,
+        `${API_URL}/projects/${editingProject._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -183,7 +182,7 @@ export default function ProjectsPage() {
     if (!confirm("Are you sure you want to delete this project?")) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
+      const response = await fetch(`${API_URL}/projects/${id}`, {
         method: "DELETE",
       });
 

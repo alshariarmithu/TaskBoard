@@ -4,6 +4,7 @@ import { Mail, Lock, User, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function SignupScreen() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -15,7 +16,7 @@ export default function SignupScreen() {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch("http://localhost:5555/api/auth/signup", {
+      const res = await fetch(`${API_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
