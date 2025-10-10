@@ -1,3 +1,5 @@
+export type TaskStage = "assigned" | "in-progress" | "in-review" | "completed";
+
 export interface Task {
   id: string;
   title: string;
@@ -5,9 +7,8 @@ export interface Task {
   stage: TaskStage;
   createdAt: Date;
   updatedAt: Date;
+  user: string;
 }
-
-export type TaskStage = "assigned" | "in-progress" | "in-review" | "completed";
 
 export interface TaskStageConfig {
   id: TaskStage;

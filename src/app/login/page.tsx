@@ -24,9 +24,10 @@ export default function LoginScreen() {
         body: JSON.stringify(formData),
       });
 
-      const { token, user } = await res.json();
-
-      login(user, token, rememberMe);
+      const { token } = await res.json();
+      console.log(token);
+      localStorage.setItem("token", token);
+      //login(user, token, rememberMe);
       router.push("/home");
     } catch (error) {
       console.error("Login error:", error);

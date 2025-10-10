@@ -37,7 +37,7 @@ export function useAuthState() {
 
   const login = useCallback(
     (userData: User, token: string, remember: boolean = false) => {
-      const storage = remember ? localStorage : sessionStorage;
+      const storage = remember ? localStorage : localStorage;
 
       storage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
