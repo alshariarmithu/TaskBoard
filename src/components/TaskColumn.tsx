@@ -24,10 +24,9 @@ export function TaskColumn({
   onDragOver,
   draggedTaskId,
 }: TaskColumnProps) {
+  //console.log(tasks);
   return (
-    <div
-      className="flex flex-col h-full rounded-xl overflow-hidden bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
-    >
+    <div className="flex flex-col h-full rounded-xl overflow-hidden bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
       {/* Column Header */}
       <div
         className={`px-6 py-4 border-b border-gray-200 flex items-center justify-between ${stage.bgColor}`}

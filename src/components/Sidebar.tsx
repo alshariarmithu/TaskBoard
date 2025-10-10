@@ -40,17 +40,9 @@ export function Sidebar({
       icon: FolderKanban,
       path: "/projects",
     },
-    { id: "team", label: "Team Members", icon: Users, path: "/team" },
     { id: "calendar", label: "Calendar", icon: Calendar, path: "/calendar" },
+    { id: "team", label: "Team Members", icon: Users, path: "/team" },
     { id: "reports", label: "Reports", icon: BarChart3, path: "/reports" },
-    { id: "documents", label: "Documents", icon: FileText, path: "/documents" },
-    {
-      id: "notifications",
-      label: "Notifications",
-      icon: Bell,
-      badge: 3,
-      path: "/notifications",
-    },
     { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
   ];
 
@@ -100,7 +92,6 @@ export function Sidebar({
               const Icon = item.icon;
               const isActive = pathname === item.path;
 
-
               return (
                 <button
                   key={item.id}
@@ -124,16 +115,16 @@ export function Sidebar({
                       <span className="flex-1 text-left text-sm font-medium">
                         {item.label}
                       </span>
-                      {item.badge && (
+                      {/* {item.badge && (
                         <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                           {item.badge}
                         </span>
-                      )}
+                      )} */}
                     </>
                   )}
-                  {isCollapsed && item.badge && (
+                  {/* {isCollapsed && item.badge && (
                     <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
-                  )}
+                  )} */}
                 </button>
               );
             })}

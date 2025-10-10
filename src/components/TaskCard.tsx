@@ -123,16 +123,21 @@ export function TaskCard({
       )}
 
       <div className="flex items-center text-xs text-gray-500">
-        <time dateTime={task.createdAt.toISOString()}>
-          {task.createdAt.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year:
-              task.createdAt.getFullYear() !== new Date().getFullYear()
-                ? "numeric"
-                : undefined,
-          })}
-        </time>
+        {(() => {
+          const createdAtDate = new Date(task.createdAt);
+          return (
+            <time dateTime={createdAtDate.toISOString()}>
+              {createdAtDate.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year:
+                  createdAtDate.getFullYear() !== new Date().getFullYear()
+                    ? "numeric"
+                    : undefined,
+              })}
+            </time>
+          );
+        })()}
       </div>
     </div>
   );
