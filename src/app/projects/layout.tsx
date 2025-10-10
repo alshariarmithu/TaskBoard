@@ -21,7 +21,10 @@ export default function Layout({ children }: LayoutProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+<<<<<<< HEAD
   const [currentPage, setCurrentPage] = useState("projects");
+=======
+>>>>>>> 58611ea9a43d1f7b8c8131d97305ea5eaa2a6165
 
   const userEmail = "user@example.com";
   const userName = "John Doe";
