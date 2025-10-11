@@ -91,6 +91,49 @@ export default function Page() {
     },
   ];
 
+  const events = [
+    {
+      id: 1,
+      title: "Sprint Planning",
+      date: "2025-10-14",
+      time: "10:00 AM",
+      type: "meeting",
+      project: "Mobile App Development",
+    },
+    {
+      id: 2,
+      title: "Client Presentation",
+      date: "2025-10-15",
+      time: "2:00 PM",
+      type: "presentation",
+      project: "Website Redesign",
+    },
+    {
+      id: 3,
+      title: "Design Review",
+      date: "2025-10-16",
+      time: "11:00 AM",
+      type: "review",
+      project: "Website Redesign",
+    },
+    {
+      id: 4,
+      title: "Campaign Launch",
+      date: "2025-10-18",
+      time: "9:00 AM",
+      type: "milestone",
+      project: "Marketing Campaign",
+    },
+    {
+      id: 5,
+      title: "Team Standup",
+      date: "2025-10-14",
+      time: "9:30 AM",
+      type: "meeting",
+      project: "All Projects",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
