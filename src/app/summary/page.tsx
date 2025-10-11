@@ -156,6 +156,19 @@ export default function Page() {
     { label: "Team Members", value: "20", icon: Users, color: "bg-orange-500" },
   ];
 
+  const getPriorityColor = (priority: any) => {
+    switch (priority) {
+      case "high":
+        return "text-red-600 bg-red-50";
+      case "medium":
+        return "text-yellow-600 bg-yellow-50";
+      case "low":
+        return "text-green-600 bg-green-50";
+      default:
+        return "text-gray-600 bg-gray-50";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
