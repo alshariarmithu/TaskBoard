@@ -48,6 +48,49 @@ export default function Page() {
     },
   ];
 
+  const tasks = [
+    {
+      id: 1,
+      title: "Design homepage mockup",
+      project: "Website Redesign",
+      priority: "high",
+      status: "in-progress",
+      assignee: "Sarah Chen",
+    },
+    {
+      id: 2,
+      title: "API integration",
+      project: "Mobile App Development",
+      priority: "high",
+      status: "in-progress",
+      assignee: "Mike Johnson",
+    },
+    {
+      id: 3,
+      title: "Content review",
+      project: "Marketing Campaign",
+      priority: "medium",
+      status: "pending",
+      assignee: "Emily Davis",
+    },
+    {
+      id: 4,
+      title: "User testing",
+      project: "Website Redesign",
+      priority: "medium",
+      status: "completed",
+      assignee: "Tom Wilson",
+    },
+    {
+      id: 5,
+      title: "Schema design",
+      project: "Database Migration",
+      priority: "high",
+      status: "in-progress",
+      assignee: "Alex Kumar",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
