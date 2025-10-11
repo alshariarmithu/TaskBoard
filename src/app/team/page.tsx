@@ -216,10 +216,10 @@ function TeamPage() {
               </div>
             </div>
             <div className="flex gap-3">
-              <button className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-all duration-200 shadow-sm border border-slate-200 hover:border-slate-300">
+              {/* <button className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-all duration-200 shadow-sm border border-slate-200 hover:border-slate-300">
                 <Download className="w-4 h-4" />
                 Export
-              </button>
+              </button> */}
               <button
                 onClick={() => setShowAddModal(true)}
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40"
@@ -466,7 +466,7 @@ function TeamPage() {
                     </div>
 
                     {/* Performance */}
-                    <div className="mb-5">
+                    {/* <div className="mb-5">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-semibold text-slate-600">
                           Performance
@@ -481,7 +481,7 @@ function TeamPage() {
                           style={{ width: `${member.performance}%` }}
                         />
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Contact Buttons */}
                     <div className="flex gap-2">
@@ -864,7 +864,7 @@ function TeamPage() {
             <div className="p-8">
               {/* User Search */}
               <div className="mb-6">
-                <label className="block text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">
+                <label className="block text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">
                   Search User
                 </label>
                 <div className="relative">
@@ -873,7 +873,7 @@ function TeamPage() {
                     type="text"
                     value={userSearchQuery}
                     onChange={(e) => setUserSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-12 py-4 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-900 placeholder:text-slate-400"
+                    className="w-full pl-12 pr-12 py-4  border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-900 placeholder:text-slate-400"
                     placeholder="Search by name or email..."
                   />
                   {isSearching && (
@@ -975,13 +975,13 @@ function TeamPage() {
                         onChange={(e) =>
                           setMemberForm({ ...memberForm, role: e.target.value })
                         }
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-4 py-3 border-2 text-gray-900 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                         placeholder="e.g. Senior Designer"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-bold text-slate-900 mb-2 uppercase tracking-wide">
+                      <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">
                         Department
                       </label>
                       <select
@@ -992,7 +992,7 @@ function TeamPage() {
                             department: e.target.value,
                           })
                         }
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-white appearance-none"
+                        className="w-full px-4 py-3 border-2 text-gray-800 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-white appearance-none"
                       >
                         {DEPARTMENTS.filter((d) => d !== "All Departments").map(
                           (dept) => (
@@ -1019,7 +1019,7 @@ function TeamPage() {
                             phone: e.target.value,
                           })
                         }
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-4 py-3 border-2 text-gray-900 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                         placeholder="+1 (555) 000-0000"
                       />
                     </div>
@@ -1037,7 +1037,7 @@ function TeamPage() {
                             location: e.target.value,
                           })
                         }
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-4 py-3 border-2 text-gray-900 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                         placeholder="City, State"
                       />
                     </div>
@@ -1053,7 +1053,7 @@ function TeamPage() {
                       onChange={(e) =>
                         setMemberForm({ ...memberForm, skills: e.target.value })
                       }
-                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                      className="w-full px-4 py-3 border-2 text-gray-900 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                       placeholder="React, TypeScript, Node.js"
                     />
                   </div>
@@ -1068,7 +1068,7 @@ function TeamPage() {
                         setMemberForm({ ...memberForm, bio: e.target.value })
                       }
                       rows={3}
-                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"
+                      className="w-full px-4 py-3 border-2 text-gray-900 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"
                       placeholder="Tell us about this team member..."
                     />
                   </div>

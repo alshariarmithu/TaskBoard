@@ -11,12 +11,16 @@ import {
   Menu,
 } from "lucide-react";
 import { Sidebar } from "../../components/Sidebar";
+import { useAuthState } from "../../hooks/useState";
+import { useRouter } from "next/navigation";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const { logout } = useAuthState();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -52,11 +56,6 @@ export default function Layout({ children }: LayoutProps) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleLogout = () => {
-    setIsDropdownOpen(false);
-    console.log("User logged out");
-  };
 
   const getInitials = (name: string) =>
     name
@@ -158,7 +157,10 @@ export default function Layout({ children }: LayoutProps) {
                       Profile
                     </button> */}
                     <button
-                      onClick={() => setIsDropdownOpen(false)}
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        router.push("/settings")
+                      }}
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                     >
                       <Settings className="w-4 h-4 text-gray-500" />
@@ -166,7 +168,7 @@ export default function Layout({ children }: LayoutProps) {
                     </button>
                     <div className="border-t border-gray-100 my-1"></div>
                     <button
-                      onClick={handleLogout}
+                      onClick={logout}
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"
                     >
                       <LogOut className="w-4 h-4" />

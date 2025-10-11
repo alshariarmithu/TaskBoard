@@ -6,8 +6,6 @@ import {
   Users,
   Calendar,
   Settings,
-  Bell,
-  FileText,
   BarChart3,
   LogOut,
   ChevronLeft,
