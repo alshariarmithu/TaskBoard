@@ -134,6 +134,28 @@ export default function Page() {
     },
   ];
 
+  const stats = [
+    {
+      label: "Active Projects",
+      value: "4",
+      icon: TrendingUp,
+      color: "bg-blue-500",
+    },
+    {
+      label: "Total Tasks",
+      value: "42",
+      icon: CheckCircle2,
+      color: "bg-green-500",
+    },
+    {
+      label: "Upcoming Events",
+      value: "8",
+      icon: Calendar,
+      color: "bg-purple-500",
+    },
+    { label: "Team Members", value: "20", icon: Users, color: "bg-orange-500" },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
