@@ -169,6 +169,19 @@ export default function Page() {
     }
   };
 
+  const getStatusColor = (status: any) => {
+    switch (status) {
+      case "completed":
+        return "text-green-600 bg-green-50";
+      case "in-progress":
+        return "text-blue-600 bg-blue-50";
+      case "pending":
+        return "text-gray-600 bg-gray-50";
+      default:
+        return "text-gray-600 bg-gray-50";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
