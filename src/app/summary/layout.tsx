@@ -33,7 +33,6 @@ export default function Layout({ children }: LayoutProps) {
     setName(uName);
     setEmail(uEmail);
   }, []);
-
   const userEmail = uEmail ? uEmail : "Guest User";
   const userName = uName ? uName : "Guest User";
   const userAvatar = "https://i.postimg.cc/s2nX02qq/unkownuser.jpg";
@@ -54,6 +53,10 @@ export default function Layout({ children }: LayoutProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLogout = () => {
+    setIsDropdownOpen(false);
+    console.log("User logged out");
+  };
 
   const getInitials = (name: string) =>
     name
