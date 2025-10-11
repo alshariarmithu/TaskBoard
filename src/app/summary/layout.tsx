@@ -33,13 +33,27 @@ export default function Layout({ children }: LayoutProps) {
     setName(uName);
     setEmail(uEmail);
   }, []);
-  
+
   const userEmail = uEmail ? uEmail : "Guest User";
   const userName = uName ? uName : "Guest User";
   const userAvatar = "https://i.postimg.cc/s2nX02qq/unkownuser.jpg";
 
   // Sidebar width constants
   const sidebarWidth = isCollapsed ? 80 : 256; // px (w-20, w-64)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
 
   const getInitials = (name: string) =>
     name
