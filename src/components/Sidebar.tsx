@@ -146,7 +146,7 @@ export function Sidebar({
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">TaskBoard</p>
                   <p className="text-xs text-slate-400 truncate">
-                    admin@taskboard.com
+                    contact@taskboard.com
                   </p>
                 </div>
               </>

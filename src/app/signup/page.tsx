@@ -29,7 +29,7 @@ export default function SignupScreen() {
         return;
       }
       localStorage.setItem("token", data.token);
-      router.push("/home");
+      router.push("/login");
     } catch (error) {
       console.error("Signup error:", error);
       alert("Something went wrong. Please try again.");
