@@ -42,7 +42,7 @@ export function Sidebar({
     },
     { id: "calendar", label: "Calendar", icon: Calendar, path: "/calendar" },
     { id: "team", label: "Team Members", icon: Users, path: "/team" },
-    { id: "reports", label: "Reports", icon: BarChart3, path: "/reports" },
+    { id: "summary", label: "Summary", icon: BarChart3, path: "/summary" },
     { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
   ];
 

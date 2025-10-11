@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 
 interface CalendarEvent {
-  id: string;
+  _id?: string;
+  id?: string;
   title: string;
   date: Date;
   startTime: string;
@@ -21,6 +22,17 @@ interface CalendarEvent {
   attendees?: number;
   color: string;
   description?: string;
+}
+
+interface EventFormData {
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  attendees: number;
+  color: string;
+  description: string;
 }
 
 const MONTHS = [
@@ -78,61 +90,189 @@ const EVENT_COLORS = [
   },
 ];
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showEventModal, setShowEventModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
     null
   );
-  const [viewMode, setViewMode] = useState<"month" | "week">("month");
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [formData, setFormData] = useState<EventFormData>({
+    title: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    location: "",
+    attendees: 0,
+    color: "blue",
+    description: "",
+  });
 
-  // Sample events
-  const [events, setEvents] = useState<CalendarEvent[]>([
-    {
-      id: "1",
-      title: "Team Standup Meeting",
-      date: new Date(2025, 9, 10, 9, 0),
-      startTime: "9:00 AM",
-      endTime: "9:30 AM",
-      location: "Conference Room A",
-      attendees: 8,
+  useEffect(() => {
+    fetchEvents();
+  }, [currentDate]);
+
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const startDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        1
+      );
+      const endDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        0
+      );
+
+      const response = await fetch(
+        `${API_BASE_URL}/events?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Adjust based on your auth
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch events");
+      }
+
+      const data = await response.json();
+      const formattedEvents = data.map((event: any) => ({
+        ...event,
+        id: event._id,
+        date: new Date(event.date),
+      }));
+
+      setEvents(formattedEvents);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load events");
+      console.error("Error fetching events:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createEvent = async (eventData: EventFormData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/events`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...eventData,
+          date: new Date(eventData.date),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create event");
+      }
+
+      const newEvent = await response.json();
+
+      setEvents([
+        ...events,
+        { ...newEvent, id: newEvent._id, date: new Date(newEvent.date) },
+      ]);
+      setShowCreateModal(false);
+      resetForm();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create event");
+      console.error("Error creating event:", err);
+    }
+  };
+
+  const updateEvent = async (id: string, eventData: Partial<CalendarEvent>) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(eventData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update event");
+      }
+
+      const updatedEvent = await response.json();
+
+      setEvents(
+        events.map((e) =>
+          e.id === id || e._id === id
+            ? {
+                ...updatedEvent,
+                id: updatedEvent._id,
+                date: new Date(updatedEvent.date),
+              }
+            : e
+        )
+      );
+
+      setShowCreateModal(false);
+      setIsEditMode(false);
+      resetForm();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update event");
+      console.error("Error updating event:", err);
+    }
+  };
+
+  const deleteEvent = async (id: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete event");
+      }
+
+      setEvents(events.filter((e) => e.id !== id && e._id !== id));
+      setSelectedEvent(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete event");
+      console.error("Error deleting event:", err);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createEvent(formData);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      date: "",
+      startTime: "",
+      endTime: "",
+      location: "",
+      attendees: 0,
       color: "blue",
-      description: "Daily team sync-up",
-    },
-    {
-      id: "2",
-      title: "Project Review",
-      date: new Date(2025, 9, 10, 14, 0),
-      startTime: "2:00 PM",
-      endTime: "3:30 PM",
-      location: "Zoom Meeting",
-      attendees: 12,
-      color: "purple",
-      description: "Q4 project milestone review",
-    },
-    {
-      id: "3",
-      title: "Client Presentation",
-      date: new Date(2025, 9, 12, 10, 0),
-      startTime: "10:00 AM",
-      endTime: "11:30 AM",
-      location: "Client Office",
-      attendees: 6,
-      color: "green",
-      description: "Final proposal presentation",
-    },
-    {
-      id: "4",
-      title: "Design Workshop",
-      date: new Date(2025, 9, 15, 13, 0),
-      startTime: "1:00 PM",
-      endTime: "4:00 PM",
-      attendees: 15,
-      color: "orange",
-      description: "UX/UI design collaboration session",
-    },
-  ]);
+      description: "",
+    });
+  };
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -144,7 +284,6 @@ function CalendarPage() {
 
     const days = [];
 
-    // Previous month's days
     const prevMonthLastDay = new Date(year, month, 0).getDate();
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
       days.push({
@@ -154,7 +293,6 @@ function CalendarPage() {
       });
     }
 
-    // Current month's days
     for (let i = 1; i <= daysInMonth; i++) {
       days.push({
         day: i,
@@ -163,7 +301,6 @@ function CalendarPage() {
       });
     }
 
-    // Next month's days
     const remainingDays = 42 - days.length;
     for (let i = 1; i <= remainingDays; i++) {
       days.push({
@@ -235,7 +372,13 @@ function CalendarPage() {
               </p>
             </div>
             <button
-              onClick={() => setShowEventModal(true)}
+              onClick={() => {
+                setShowCreateModal(true);
+                setFormData({
+                  ...formData,
+                  date: selectedDate.toISOString().split("T")[0],
+                });
+              }}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <Plus className="w-4 h-4" />
@@ -244,11 +387,17 @@ function CalendarPage() {
           </div>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            {error}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Calendar Section */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-              {/* Calendar Header */}
               <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -267,14 +416,12 @@ function CalendarPage() {
                     <button
                       onClick={previousMonth}
                       className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-150"
-                      aria-label="Previous month"
                     >
                       <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                       onClick={nextMonth}
                       className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-150"
-                      aria-label="Next month"
                     >
                       <ChevronRight className="w-5 h-5" />
                     </button>
@@ -282,84 +429,91 @@ function CalendarPage() {
                 </div>
               </div>
 
-              {/* Calendar Grid */}
               <div className="p-6">
-                {/* Day Headers */}
-                <div className="grid grid-cols-7 gap-2 mb-3">
-                  {DAYS.map((day) => (
-                    <div key={day} className="text-center">
-                      <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        {day}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Calendar Days */}
-                <div className="grid grid-cols-7 gap-2">
-                  {days.map((dayInfo, index) => {
-                    const dayEvents = getEventsForDate(dayInfo.date);
-                    const isCurrentDay = isToday(dayInfo.date);
-                    const isSelectedDay = isSelected(dayInfo.date);
-
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedDate(dayInfo.date)}
-                        className={`
-                          relative min-h-[80px] p-2 rounded-xl border-2 transition-all duration-200
-                          ${
-                            dayInfo.isCurrentMonth
-                              ? "bg-white hover:bg-gray-50 border-gray-200"
-                              : "bg-gray-50/50 border-gray-100 text-gray-400"
-                          }
-                          ${
-                            isSelectedDay
-                              ? "ring-2 ring-blue-500 border-blue-500"
-                              : ""
-                          }
-                          ${isCurrentDay ? "bg-blue-50 border-blue-300" : ""}
-                        `}
-                      >
-                        <div className="flex flex-col items-start h-full">
-                          <span
-                            className={`
-                            text-sm font-medium mb-1
-                            ${
-                              isCurrentDay
-                                ? "w-7 h-7 flex items-center justify-center rounded-full bg-blue-600 text-white"
-                                : dayInfo.isCurrentMonth
-                                ? "text-gray-900"
-                                : "text-gray-400"
-                            }
-                          `}
-                          >
-                            {dayInfo.day}
+                {loading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-7 gap-2 mb-3">
+                      {DAYS.map((day) => (
+                        <div key={day} className="text-center">
+                          <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            {day}
                           </span>
-                          <div className="w-full space-y-1">
-                            {dayEvents.slice(0, 2).map((event) => {
-                              const colors = getColorClasses(event.color);
-                              return (
-                                <div
-                                  key={event.id}
-                                  className={`text-[10px] px-1.5 py-0.5 rounded ${colors.class} text-white truncate`}
-                                  title={event.title}
-                                >
-                                  {event.title}
-                                </div>
-                              );
-                            })}
-                            {dayEvents.length > 2 && (
-                              <div className="text-[10px] text-gray-500 font-medium">
-                                +{dayEvents.length - 2} more
-                              </div>
-                            )}
-                          </div>
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-2">
+                      {days.map((dayInfo, index) => {
+                        const dayEvents = getEventsForDate(dayInfo.date);
+                        const isCurrentDay = isToday(dayInfo.date);
+                        const isSelectedDay = isSelected(dayInfo.date);
+
+                        return (
+                          <button
+                            key={index}
+                            onClick={() => setSelectedDate(dayInfo.date)}
+                            className={`
+                              relative min-h-[80px] p-2 rounded-xl border-2 transition-all duration-200
+                              ${
+                                dayInfo.isCurrentMonth
+                                  ? "bg-white hover:bg-gray-50 border-gray-200"
+                                  : "bg-gray-50/50 border-gray-100 text-gray-400"
+                              }
+                              ${
+                                isSelectedDay
+                                  ? "ring-2 ring-blue-500 border-blue-500"
+                                  : ""
+                              }
+                              ${
+                                isCurrentDay ? "bg-blue-50 border-blue-300" : ""
+                              }
+                            `}
+                          >
+                            <div className="flex flex-col items-start h-full">
+                              <span
+                                className={`
+                                  text-sm font-medium mb-1
+                                  ${
+                                    isCurrentDay
+                                      ? "w-7 h-7 flex items-center justify-center rounded-full bg-blue-600 text-white"
+                                      : dayInfo.isCurrentMonth
+                                      ? "text-gray-900"
+                                      : "text-gray-400"
+                                  }
+                                `}
+                              >
+                                {dayInfo.day}
+                              </span>
+                              <div className="w-full space-y-1">
+                                {dayEvents.slice(0, 2).map((event) => {
+                                  const colors = getColorClasses(event.color);
+                                  return (
+                                    <div
+                                      key={event.id || event._id}
+                                      className={`text-[10px] px-1.5 py-0.5 rounded ${colors.class} text-white truncate`}
+                                      title={event.title}
+                                    >
+                                      {event.title}
+                                    </div>
+                                  );
+                                })}
+                                {dayEvents.length > 2 && (
+                                  <div className="text-[10px] text-gray-500 font-medium">
+                                    +{dayEvents.length - 2} more
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -388,7 +542,7 @@ function CalendarPage() {
                       const colors = getColorClasses(event.color);
                       return (
                         <div
-                          key={event.id}
+                          key={event.id || event._id}
                           onClick={() => setSelectedEvent(event)}
                           className={`p-4 rounded-xl border-2 ${colors.border} ${colors.light} cursor-pointer hover:shadow-md transition-all duration-200`}
                         >
@@ -446,6 +600,194 @@ function CalendarPage() {
         </div>
       </div>
 
+      {/* Create Event Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {isEditMode ? "Edit Event" : "Create Event"}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowCreateModal(false);
+                  resetForm();
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (isEditMode && selectedEvent) {
+                  updateEvent(selectedEvent._id || selectedEvent.id || "", {
+                    ...formData,
+                    date: new Date(formData.date),
+                  });
+                } else {
+                  createEvent(formData);
+                }
+              }}
+              className="p-6 space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Event title"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Date *
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={formData.date}
+                  onChange={(e) =>
+                    setFormData({ ...formData, date: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Start Time *
+                  </label>
+                  <input
+                    type="time"
+                    required
+                    value={formData.startTime}
+                    onChange={(e) =>
+                      setFormData({ ...formData, startTime: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Time *
+                  </label>
+                  <input
+                    type="time"
+                    required
+                    value={formData.endTime}
+                    onChange={(e) =>
+                      setFormData({ ...formData, endTime: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={formData.location}
+                  onChange={(e) =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Event location"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Attendees
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.attendees}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      attendees: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Color
+                </label>
+                <div className="flex gap-2">
+                  {EVENT_COLORS.map((color) => (
+                    <button
+                      key={color.id}
+                      type="button"
+                      onClick={() =>
+                        setFormData({ ...formData, color: color.id })
+                      }
+                      className={`w-8 h-8 rounded-full ${color.class} ${
+                        formData.color === color.id
+                          ? "ring-2 ring-offset-2 ring-gray-400"
+                          : ""
+                      } transition-all`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  placeholder="Event description"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    resetForm();
+                  }}
+                  className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Create Event
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Event Detail Modal */}
       {selectedEvent && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -501,7 +843,7 @@ function CalendarPage() {
                   </div>
                 )}
 
-                {selectedEvent.attendees && (
+                {selectedEvent.attendees && selectedEvent.attendees > 0 && (
                   <div className="flex items-center gap-3 text-sm">
                     <Users className="w-5 h-5 text-gray-400" />
                     <span className="text-gray-700">
@@ -513,10 +855,42 @@ function CalendarPage() {
             </div>
 
             <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3">
-              <button className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button
+                onClick={() => {
+                  if (!selectedEvent) return;
+
+                  setFormData({
+                    title: selectedEvent.title,
+                    date: selectedEvent.date.toISOString().split("T")[0],
+                    startTime: selectedEvent.startTime,
+                    endTime: selectedEvent.endTime,
+                    location: selectedEvent.location || "",
+                    attendees: selectedEvent.attendees || 0,
+                    color: selectedEvent.color || "blue",
+                    description: selectedEvent.description || "",
+                  });
+
+                  setIsEditMode(true);
+                  setShowCreateModal(true);
+                  setSelectedEvent(null); // close detail modal
+                }}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 Edit
               </button>
-              <button className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+
+              <button
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      "Are you sure you want to delete this event?"
+                    )
+                  ) {
+                    deleteEvent(selectedEvent.id || selectedEvent._id || "");
+                  }
+                }}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+              >
                 Delete
               </button>
             </div>

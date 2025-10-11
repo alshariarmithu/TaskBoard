@@ -25,7 +25,7 @@ export default function LoginScreen() {
       });
 
       const { token, user } = await res.json();
-      //console.log(token);
+      console.log(user);
       localStorage.setItem("token", token);
       localStorage.setItem("userName", user.name);
       localStorage.setItem("email", user.email);
